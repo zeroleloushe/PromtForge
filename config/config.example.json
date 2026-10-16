@@ -1,0 +1,70 @@
+{
+    "comfy": {
+        "enabled": true,
+        "url": "http://127.0.0.1:8188",
+        "free_before_generate": true,
+        "unload_strata_on_run": true,
+        "poll_interval": 2,
+        "wait_busy_timeout": 600
+    },
+    "strata": {
+        "executable": "C:\\path\\to\\Strata\\run-iq2_xs.bat",
+        "launcher_set": false,
+        "arguments": [],
+        "api_base": "http://localhost:8080/v1",
+        "health_endpoint": "/health",
+        "unload_endpoint": "",
+        "start_timeout": 180,
+        "auto_start": false,
+        "auto_unload": true,
+        "auto_unload_delay": 300,
+        "auto_shutdown": false,
+        "after_stop": "unload"
+    },
+    "generation": {
+        "temperature": 1.0,
+        "max_tokens": 32000,
+        "streaming": true,
+        "timeout": 120,
+        "stream_timeout": 600,
+        "thinking_level": "high",
+        "enable_thinking": true,
+        "show_reasoning": true
+    },
+    "ui": {
+        "theme": "midnight",
+        "language": "ru",
+        "animations": true,
+        "native_titlebar": true,
+        "last_model": "",
+        "model_card_open": false,
+        "styles_open": true,
+        "right_open": true,
+        "translate_lang": "Russian"
+    },
+    "storage": {
+        "data_dir": "data",
+        "history_dir": "data/history",
+        "references_dir": "data/references"
+    },
+    "chat": {
+        "tools_enabled": true,
+        "approval": "ask",
+        "max_steps": 12,
+        "system_prompt": "",
+        "system_prompt_file": "",
+        "workspace": "",
+        "search_provider": "duckduckgo",
+        "searxng_url": "",
+        "brave_key": "",
+        "allow_private_net": false,
+        "disabled_tools": [],
+        "show_reasoning": false,
+        "last_session": 0
+    },
+    "options": {
+        "enhance_with_llm": true,
+        "add_negative_prompt": true,
+        "use_references": true
+    }
+}

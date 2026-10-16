@@ -1,0 +1,13 @@
+{
+    "id": "minimax_h3",
+    "name": "MiniMax H3",
+    "api_base": "http://127.0.0.1:8080/v1",
+    "model": "minimax-h3",
+    "system_prompt": "",
+    "system_prompt_file": "data/prompts/portable-prompt.md",
+    "temperature": 1.0,
+    "max_tokens": 32000,
+    "enabled": true,
+    "supports_vision": true,
+    "order": 1
+}

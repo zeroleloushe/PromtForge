@@ -1,0 +1,56 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- виртуальное окружение ---
+.venv/
+venv/
+env/
+
+# --- сборка (build_exe.bat / PyInstaller) ---
+build/
+dist/
+*.spec
+
+# --- резервные копии правок ---
+_backup_*/
+
+# --- логи и временные файлы ---
+logs/
+*.log
+tmp*/
+workspace/
+*.tmp
+
+# --- пользовательские данные ---
+config/config.json
+data/promptforge.db
+data/promptforge.db-*
+data/history/
+data/references/
+data/mcp_memory.json
+
+# --- локальные пресеты, не для публикации ---
+data/models/minimax_nsfw.json
+
+# --- кэш иконок, локальные заметки ---
+promptforge_assets/
+design_preview.png
+Задача.txt
+
+# --- секреты ---
+.env
+.env.*
+*.key
+*.pem
+
+# --- IDE / ОС ---
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
