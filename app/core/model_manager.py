@@ -6,6 +6,7 @@ import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from app.core.connection import LEGACY_PRESET_KEYS
 from app.utils import paths
 from app.utils.log import get_logger
 
@@ -16,8 +17,6 @@ log = get_logger("models")
 class Model:
     id: str
     name: str
-    api_base: str = "http://127.0.0.1:8080/v1"
-    model: str = ""
     system_prompt: str = ""
     system_prompt_file: str = ""   # .md / .txt вместо текста system_prompt
     temperature: float = 1.0
@@ -29,6 +28,11 @@ class Model:
 
     @classmethod
     def from_dict(cls, d: dict) -> "Model":
+        # подключение берётся только из глобальных настроек; старые api_base/model и т.п. игнорируются
+        # (из файла они уйдут при следующем сохранении модели — пресет пользователя не удаляется)
+        stale = sorted(k for k in d if k in LEGACY_PRESET_KEYS)
+        if stale:
+            log.info("Model %s: ignoring legacy connection keys %s", d.get("id") or d.get("name"), stale)
         known = {k: d[k] for k in cls.__dataclass_fields__ if k in d}
         known.setdefault("id", slugify(d.get("name", "model")))
         known.setdefault("name", known["id"])

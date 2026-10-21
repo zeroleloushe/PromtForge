@@ -196,9 +196,6 @@ class ModelDialog(BaseDialog):
         super().__init__(parent, t("model_new"), 620)
         self.name = QLineEdit()
         self.name.setPlaceholderText("LTX 2")
-        self.api = QLineEdit(defaults.get("api_base", ""))
-        self.model_id = QLineEdit()
-        self.model_id.setPlaceholderText("model-id")
         self.temp = QDoubleSpinBox()
         self.temp.setRange(0, 2)
         self.temp.setSingleStep(0.05)
@@ -210,11 +207,6 @@ class ModelDialog(BaseDialog):
         self.vision = Toggle(False)
         self.system = SystemPromptBox(t("model_system_ph"), min_height=120, max_height=180, padded=False)
         self.body.addWidget(_row(t("model_name"), self.name))
-        g = QHBoxLayout()
-        g.setSpacing(12)
-        g.addWidget(_row(t("model_api"), self.api), 2)
-        g.addWidget(_row(t("model_id"), self.model_id), 1)
-        self.body.addLayout(g)
         g2 = QHBoxLayout()
         g2.setSpacing(12)
         g2.addWidget(_row(t("param_temperature"), self.temp))
@@ -237,8 +229,7 @@ class ModelDialog(BaseDialog):
     def data(self) -> dict:
         text, path = self.system.value()
         return {
-            "name": self.name.text().strip(), "api_base": self.api.text().strip(),
-            "model": self.model_id.text().strip() or self.name.text().strip().lower().replace(" ", "-"),
+            "name": self.name.text().strip(),
             "system_prompt": text, "system_prompt_file": path,
             "temperature": self.temp.value(),
             "max_tokens": self.max_tokens.value(), "supports_vision": self.vision.isChecked(), "enabled": True,

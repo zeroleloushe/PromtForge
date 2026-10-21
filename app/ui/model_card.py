@@ -213,8 +213,6 @@ class ModelCard(QFrame):
         self.model_btn.setProperty("off", not m.enabled)
         repolish(self.model_btn)
         self.f_name.setText(m.name)
-        self.f_id.setText(m.model)
-        self.f_api.setText(m.api_base)
         self.f_temp.setValue(m.temperature)
         self.f_tokens.setValue(m.max_tokens)
         self.f_vision.setChecked(m.supports_vision)
@@ -225,7 +223,6 @@ class ModelCard(QFrame):
         text, path = self.system.value()
         return {
             "name": self.f_name.text().strip() or (self._model.name if self._model else "Model"),
-            "model": self.f_id.text().strip(), "api_base": self.f_api.text().strip(),
             "temperature": self.f_temp.value(), "max_tokens": self.f_tokens.value(),
             "supports_vision": self.f_vision.isChecked(), "enabled": self.f_enabled.isChecked(),
             "system_prompt": text, "system_prompt_file": path,

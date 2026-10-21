@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 
 from PySide6.QtCore import QObject, QThread, Signal
 
+from app.core import connection
 from app.core.model_manager import Model
 from app.core.toolcalls import fit_messages, new_call_id, parse_args, to_prompt_messages
 from app.mcp.builtin import ToolDef
@@ -92,8 +93,8 @@ class _Worker(QThread):
                     self.done.emit(True)
                     return
                 raise StrataError("start", self.strata.detail)
-            self.api = StrataAPI(self.p.model.api_base, self.config.get("strata.health_endpoint", "/health"),
-                                 self.config.get("generation.timeout", 120))
+            self.api = connection.make_api(self.config)
+            self._model = connection.model_id(self.config, self.strata, self.api)
             if not self.p.ctx_tokens:
                 self.p.ctx_tokens = self.api.context_size()
             stopped = self._loop()
@@ -108,7 +109,7 @@ class _Worker(QThread):
             self.strata.mark_idle()
 
     def _key(self) -> str:
-        return f"{self.p.model.api_base}|{self.p.model.model}"
+        return connection.api_base(self.config)
 
     def _loop(self) -> bool:
         p = self.p
@@ -165,7 +166,8 @@ class _Worker(QThread):
         msgs = [_clean(m) for m in messages]
         if mode == "prompt":
             msgs = to_prompt_messages(msgs, defs)
-        body: dict = {"model": p.model.model, "temperature": p.temperature, "max_tokens": p.max_tokens, "messages": msgs}
+        body: dict = connection.apply_model({"temperature": p.temperature, "max_tokens": p.max_tokens, "messages": msgs},
+                                            getattr(self, "_model", ""))
         if defs and mode == "native":
             body["tools"] = [d.as_openai() for d in defs]
             body["tool_choice"] = "auto"
@@ -335,7 +337,7 @@ class AgentEngine(QObject):
         return self._worker is not None
 
     def tool_mode_of(self, model: Model) -> str:
-        return self._sticky.get(f"{model.api_base}|{model.model}", "native")
+        return self._sticky.get(connection.api_base(self.config), "native")
 
     def send(self, params: RunParams) -> bool:
         if self._worker is not None:

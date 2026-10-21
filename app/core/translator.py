@@ -9,6 +9,7 @@ import time
 
 from PySide6.QtCore import QObject, QThread, Signal
 
+from app.core import connection
 from app.core.model_manager import Model
 from app.strata.strata_api import StrataAPI, StrataError
 from app.strata.strata_manager import StrataManager
@@ -59,15 +60,16 @@ class _Worker(QThread):
                     self.done.emit("", True)
                     return
                 raise StrataError("start", self.strata.detail)
-            self.api = StrataAPI(self.model.api_base, self.config.get("strata.health_endpoint", "/health"),
-                                 self.config.get("generation.timeout", 120))
+            self.api = connection.make_api(self.config)
             body = {
-                "model": self.model.model, "temperature": 0.2, "max_tokens": self.max_tokens,
+                "model": connection.model_id(self.config, self.strata, self.api),
+                "temperature": 0.2, "max_tokens": self.max_tokens,
                 "messages": [{"role": "system", "content": SYSTEM.format(lang=self.lang)},
                              {"role": "user", "content": self.text}],
                 # перевод не требует рассуждений — так он быстрее
                 "chat_template_kwargs": {"enable_thinking": False},
             }
+            connection.apply_model(body, body.get("model", ""))
             out = self._stream(body)
             log.info("Translation end chars=%d stopped=%s", len(out), self.cancel.is_set())
             self.done.emit(out, self.cancel.is_set())

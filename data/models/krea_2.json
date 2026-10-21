@@ -1,8 +1,6 @@
 {
     "id": "krea_2",
     "name": "Krea 2",
-    "api_base": "http://127.0.0.1:8080/v1",
-    "model": "krea-2",
     "system_prompt": "Write a highly detailed and descriptive caption for this image. \nAccurately convey the image style, shapes, anatomy, etc.. \nDescribe the angle, the position of the camera, and what is happening in the image. \nIf the character in the image is famous, please indicate his name and where he is from.\nYour task is to present a description in the form of a detailed promt for generating an image in Flux 2, Krea 2, or Qwen Image. According to this promt, an image will be generated that should repeat the reference exactly.\nIt is important to specify where the elements are located in the image\nDescribe it in detail but concisely, using 200-1000 words.  \nWithout scars and deformities! \nImportant! Don't use the words wet, moist, wet pussy, etc. because the model has a bug that makes the entire character wet!\nWrite strictly only a description, without unnecessary questions or dialogues! ",
     "temperature": 0.7,
     "max_tokens": 8192,

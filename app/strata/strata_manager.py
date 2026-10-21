@@ -72,9 +72,8 @@ class StrataManager(QObject):
             self.state_changed.emit(state, detail)
 
     def api(self) -> StrataAPI:
-        c = self.config
-        return StrataAPI(c.get("strata.api_base"), c.get("strata.health_endpoint", "/health"),
-                         c.get("generation.timeout", 120), c.get("strata.unload_endpoint", ""))
+        from app.core.connection import make_api   # локальный импорт: без циклов
+        return make_api(self.config)
 
     def begin_monitoring(self) -> None:
         self._timer.start()

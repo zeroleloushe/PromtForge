@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (QApplication, QButtonGroup, QPlainTextEdit, QText
                                QVBoxLayout, QWidget)
 
 from app.core import h3
+from app.core import connection
 from app.core.agent_engine import AgentEngine, RunParams
 from app.core.chat_store import ChatStore, sanitize_history
 from app.core.comfy_bridge import ComfyBridge
@@ -541,8 +542,7 @@ class MainWindow(QMainWindow):
         self.refs_panel.set_vision(m.supports_vision and bool(self.config.get("options.use_references", True)))
 
     def _model_api_id(self) -> str:
-        m = self.models.get(self.model_id)
-        return m.model if m else ""
+        return connection.model_id(self.config, self.strata)
 
     def select_model(self, model_id: str) -> None:
         if self.engine.busy or self.translator.busy or self.chat_engine.busy or model_id == self.model_id:
@@ -563,8 +563,7 @@ class MainWindow(QMainWindow):
         menu.exec(btn.mapToGlobal(btn.rect().bottomLeft()))
 
     def add_model(self) -> None:
-        dlg = ModelDialog(self, {"api_base": self.config.get("strata.api_base"),
-                                 "temperature": self.config.get("generation.temperature", 1.0),
+        dlg = ModelDialog(self, {"temperature": self.config.get("generation.temperature", 1.0),
                                  "max_tokens": self.config.get("generation.max_tokens", 32000)})
         if dlg.exec():
             m = self.models.create(dlg.data())

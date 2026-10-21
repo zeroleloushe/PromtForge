@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 
 from PySide6.QtCore import QObject, QThread, Signal
 
+from app.core import connection
 from app.core.context_builder import BuiltContext, ContextBuilder, ContextOptions
 from app.core.model_manager import Model
 from app.core.reference_manager import Reference
@@ -87,9 +88,8 @@ class _Worker(QThread):
                 else ContextOptions(req.options.aspect_ratio, req.options.creativity, req.options.include_history, False))
             for w in ctx.warnings:
                 self.warning.emit(w)
-            self.api = StrataAPI(req.model.api_base, self.config.get("strata.health_endpoint", "/health"),
-                                 self.config.get("generation.timeout", 120),
-                                 stream_timeout=self.config.get("generation.stream_timeout", 600))
+            self.api = connection.make_api(self.config, stream_timeout=self.config.get("generation.stream_timeout", 600))
+            self._model = connection.model_id(self.config, self.strata, self.api)
             self.strata.mark_loading()
             self._t0 = time.time()      # TTFT считаем от отправки запроса, а не от старта Strata
             text = self._run(ctx, text)
@@ -108,7 +108,8 @@ class _Worker(QThread):
 
     def _run(self, ctx: BuiltContext, text: str) -> str:
         req = self.req
-        payload = {"model": req.model.model, "temperature": req.temperature, "max_tokens": req.max_tokens}
+        payload = connection.apply_model({"temperature": req.temperature, "max_tokens": req.max_tokens},
+                                         getattr(self, "_model", ""))
         level = req.thinking_level if req.enable_thinking else "off"
         if level == "off":
             # llama.cpp-совместимые серверы: отключает режим рассуждений в chat-шаблоне
